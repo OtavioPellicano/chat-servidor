@@ -1,9 +1,19 @@
 #ifndef SERVIDOR_H
 #define SERVIDOR_H
+/**
+  Formato da mensagem:
+  #palavraChave#:mensagem
+
+exemplo:
+  #$nicknamePass$#:nickname
+
+
+**/
 
 #include <QTcpServer>
 #include <QDebug>
 #include <algorithm>
+#include <QStringBuilder>
 #include "conexao.h"
 #include "gerenciaconexao.h"
 
@@ -26,6 +36,9 @@ private:
 
     Conexao *conexao() const;
     void setConexao(Conexao *conexao);
+
+    void validarNickname(const QByteArray &msg);
+    bool validarEstruturaMensagem(const QByteArray &msg);
 
 
 protected:

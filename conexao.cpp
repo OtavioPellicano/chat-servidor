@@ -6,6 +6,11 @@ Conexao::Conexao(qintptr descript, QObject *parent) : QObject(parent)
     startConexao();
 }
 
+Conexao::~Conexao()
+{
+    socket()->close();
+}
+
 
 void Conexao::startConexao()
 {
@@ -31,19 +36,6 @@ void Conexao::disconnected()
 
 void Conexao::readyRead()
 {
-
-//    setNickname(socket()->readAll());
-
-//    if(!addNickname(nickname(), descriptor()))
-//    {
-//        socket()->write("nickname utilizado por outro usuario\r\voce sera desconectado do servidor\r\n");
-//        socket()->flush();
-//        socket()->waitForBytesWritten();
-//        socket()->close();
-//        return;
-//    }
-
-//    qDebug() << descriptor() << ": " << socket()->readAll();
 
     emit readyRead(socket()->readAll());
 
@@ -81,6 +73,7 @@ bool Conexao::enviarMensagem(const QString &msg)
 {
 
     QByteArray byteArrayTemp = msg.toLocal8Bit();
+    byteArrayTemp.append("\r\n");
     socket()->write(byteArrayTemp);
     if(!socket()->waitForBytesWritten())
         return false;

@@ -38,26 +38,14 @@ void Servidor::readyRead(const QByteArray &msg)
 {
     qDebug() << msg;
 
-    string str = QString(msg).toStdString();
-    //auto itStr = str.begin();
-
-    QString keyNickname = QString::fromStdString(string(std::find(str.begin(), str.end(), '#') + 1, std::find(str.begin()+1,str.end(), '#')));
-
-    if(keyNickname == KEY_NICKNAME)
+    if(!validarEstruturaMensagem(msg))
     {
-        QString nickname = QString::fromStdString(string(std::find(str.begin(),str.end(), ':') + 1, str.end()));
-        qDebug() << "conexao nickname";
-        if(gerenConexao()->addNickname(nickname, conexao()->descriptor()))
-        {
-            qDebug() << "nickname adicionado";
-        }
-        else
-        {
-            qDebug() << "nickname ja existe";
-            if(!conexao()->enviarMensagem(nickname))
-                qDebug() << "impossivel enviar mensagem!";
-        }
+        qDebug() << "mensagem fora da estrutura";
+        conexao()->enviarMensagem("Mensagem fora do padrao");
+        return;
     }
+
+    validarNickname(msg);
 
 }
 
@@ -87,4 +75,53 @@ Conexao *Servidor::conexao() const
 void Servidor::setConexao(Conexao *conexao)
 {
     mConexao = conexao;
+}
+
+void Servidor::validarNickname(const QByteArray &msg)
+{
+    string str = QString(msg).toStdString();
+
+    str = string(str.begin(),std::remove(str.begin(), str.end(), '\r'));
+    str = string(str.begin(),std::remove(str.begin(), str.end(), '\n'));
+
+    if(!str.empty())
+    {
+        QString keyNickname = QString::fromStdString(string(std::find(str.begin(), str.end(), '#') + 1, std::find(str.begin()+1,str.end(), '#')));
+
+        if(keyNickname == KEY_NICKNAME)
+        {
+            QString nickname = QString::fromStdString(string(std::find(str.begin(),str.end(), ':') + 1, str.end()));
+
+            if(gerenConexao()->addNickname(nickname, conexao()->descriptor()))
+            {
+                qDebug() << "nickname: \"" % nickname %"\" adicionado";
+                if(!conexao()->enviarMensagem(nickname))
+                    qDebug() << "impossivel enviar mensagem!";
+            }
+            else
+            {
+                QString qstr = "o nickname ja \"" % nickname % "\" existe!";
+                qDebug() << "nickname ja existe";
+                if(!conexao()->enviarMensagem(qstr))
+                    qDebug() << "impossivel enviar mensagem!";
+
+                delete conexao();
+            }
+        }
+    }
+
+}
+
+bool Servidor::validarEstruturaMensagem(const QByteArray &msg)
+{
+    string str = QString(msg).toStdString();
+
+    if(std::count(str.begin(), str.end(),'#') == 2 && std::count(str.begin(), str.end(), ':') == 1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

@@ -13,6 +13,7 @@ class Conexao : public QObject
     Q_OBJECT
 public:
     explicit Conexao(qintptr descript, QObject *parent = nullptr);
+    virtual ~Conexao();
 
     qintptr descriptor() const;
     void setDescriptor(const qintptr &descriptor);
