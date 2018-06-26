@@ -2,10 +2,10 @@
 #define SERVIDOR_H
 /**
   Formato da mensagem:
-  #palavraChave#:mensagem
+  #origem#destino#:mensagem
 
-exemplo:
-  #$nicknamePass$#:nickname
+  Formato Nickname:
+  #origem##:
 
 
 **/
@@ -32,12 +32,21 @@ public:
     GerenciaConexao *gerenConexao() const;
     void setGerenConexao(GerenciaConexao *gerenConexao);
 
+    QString origem() const;
+    void setOrigem(const QByteArray &msg);
+
+    QString destino() const;
+    void setDestino(const QByteArray &msg);
+
+    QString mensagem() const;
+    void setMensagem(const QByteArray &msg);
+
 private:
 
     Conexao *conexao() const;
     void setConexao(Conexao *conexao);
 
-    void validarNickname(const QByteArray &msg);
+    void validarNickname();
     bool validarEstruturaMensagem(const QByteArray &msg);
 
 
@@ -58,6 +67,10 @@ private:
     Conexao *mConexao;
 
     GerenciaConexao *mGerenConexao;
+
+    QString mOrigem;
+    QString mDestino;
+    QString mMenssagem;
 };
 
 #endif // SERVIDOR_H
