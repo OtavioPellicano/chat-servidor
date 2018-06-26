@@ -18,8 +18,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     servidor.cpp \
-    conexao.cpp
+    conexao.cpp \
+    task.cpp \
+    gerenciaconexao.cpp
 
 HEADERS += \
     servidor.h \
-    conexao.h
+    conexao.h \
+    task.h \
+    gerenciaconexao.h

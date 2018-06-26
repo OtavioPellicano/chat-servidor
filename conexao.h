@@ -5,7 +5,8 @@
 #include <QTcpSocket>
 #include <QThreadPool>
 #include <QDebug>
-#include <QAbstractSocket>
+#include "task.h"
+#include <map>
 
 class Conexao : public QObject
 {
@@ -13,17 +14,23 @@ class Conexao : public QObject
 public:
     explicit Conexao(qintptr descript, QObject *parent = nullptr);
 
-    void startConexao();
-
-private:
-
-    QTcpSocket *socket() const;
-    void setSocket(QTcpSocket *socket);
     qintptr descriptor() const;
     void setDescriptor(const qintptr &descriptor);
 
-signals:
+    bool enviarMensagem(const QString &msg);
 
+private:
+
+    void startConexao();
+
+    QTcpSocket *socket() const;
+    void setSocket(QTcpSocket *socket);
+
+
+
+signals:
+    void readyRead(const QByteArray &msg);
+    void disconnected(const qintptr &descript);
 
 public slots:   //signals do TcpScoket:
     void disconnected();
@@ -32,8 +39,6 @@ public slots:   //signals do TcpScoket:
 private:
     qintptr mDescriptor;
     QTcpSocket *mSocket;
-
-
 
 };
 
