@@ -29,6 +29,7 @@ public:
 
     void startServidor();
 
+private:
     GerenciaConexao *gerenConexao() const;
     void setGerenConexao(GerenciaConexao *gerenConexao);
 
@@ -41,7 +42,7 @@ public:
     QString mensagem() const;
     void setMensagem(const QByteArray &msg);
 
-private:
+    QString encapsularMsg(const QString &qstrOrigem, const QString &qstrDestino = "", const QString &qstrMsg = "");
 
     Conexao *conexao() const;
     void setConexao(Conexao *conexao);
@@ -62,15 +63,13 @@ public slots:
 
 private:
 
-    const QString KEY_NICKNAME = "$nicknamePass$";
-
     Conexao *mConexao;
 
     GerenciaConexao *mGerenConexao;
 
     QString mOrigem;
     QString mDestino;
-    QString mMenssagem;
+    QString mMensagem;
 };
 
 #endif // SERVIDOR_H

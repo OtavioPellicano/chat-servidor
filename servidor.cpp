@@ -110,7 +110,7 @@ void Servidor::setDestino(const QByteArray &msg)
 
 QString Servidor::mensagem() const
 {
-    return mMenssagem;
+    return mMensagem;
 }
 
 void Servidor::setMensagem(const QByteArray &msg)
@@ -122,7 +122,12 @@ void Servidor::setMensagem(const QByteArray &msg)
 
     string::iterator itFirst = std::find(str.begin(), str.end(), ':');
 
-    mMenssagem = QString::fromStdString(string(itFirst + 1, str.end()));
+    mMensagem = QString::fromStdString(string(itFirst + 1, str.end()));
+}
+
+QString Servidor::encapsularMsg(const QString &qstrOrigem, const QString &qstrDestino, const QString &qstrMsg)
+{
+    return QString("#%1#%2#:%3").arg(qstrOrigem).arg(qstrDestino).arg(qstrMsg);
 }
 
 
@@ -147,14 +152,13 @@ void Servidor::validarNickname()
 
     if(gerenConexao()->addNickname(origem(), conexao()->descriptor()))
     {
-        if(!conexao()->enviarMensagem(origem()))
+        if(!conexao()->enviarMensagem(encapsularMsg(origem())))
             qDebug() << "impossivel enviar mensagem!";
     }
     else
     {
-        QString qstr = "o nickname #" % origem() % "# ja existe!";
         qDebug() << "nickname ja existe";
-        if(!conexao()->enviarMensagem(qstr))
+        if(!conexao()->enviarMensagem(encapsularMsg("")))
             qDebug() << "impossivel enviar mensagem!";
 
         delete conexao();
