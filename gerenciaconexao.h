@@ -23,9 +23,10 @@ public:
     void rmNickname(const qintptr &descript);
     QString nickname(const qintptr &descript);
 
+private:
+
     void setNomeArqOut(const QString &nomeArqOut);
 
-private:
     QDir dirLog() const;
 
     QString nomeArqOut() const;
