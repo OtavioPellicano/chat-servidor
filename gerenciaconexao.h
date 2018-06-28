@@ -32,6 +32,7 @@ public:
     qintptr descriptor(const QString &nick);
     QString encapsularMsg(const QString &qstrOrigem, const QString &qstrDestino = "", const QString &qstrMsg = "");
     void broadcast(const enumStatus &status, const QString &usuario);
+    void validarNickname(QString nick, Conexao *cliente, const bool &valido);
 
 
 private:

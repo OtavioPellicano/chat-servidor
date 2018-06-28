@@ -15,9 +15,15 @@ GerenciaConexao::~GerenciaConexao()
 bool GerenciaConexao::addNickname(const QString &nick, Conexao *cliente)
 {
     if(mMapNickConexao.find(nick) != mMapNickConexao.end())
+    {
+        validarNickname(nick, cliente, false);
+        delete cliente;
         return false;
+    }
+
 
     mMapNickConexao[nick] = cliente;
+    validarNickname(nick, cliente, true);
     salvarLog(CONECTADO, nickname(cliente->descriptor()));
     broadcast(CONECTADO, nickname(cliente->descriptor()));
 
@@ -116,6 +122,21 @@ void GerenciaConexao::broadcast(const GerenciaConexao::enumStatus &status, const
         return;
     }
 
+
+}
+
+void GerenciaConexao::validarNickname(QString nick,Conexao *cliente, const bool &valido)
+{
+    if(valido)
+    {
+        if(!cliente->enviarMensagem(encapsularMsg(nick)))
+            qDebug() << "impossivel enviar nickname";
+    }
+    else
+    {
+        if(!cliente->enviarMensagem(encapsularMsg("")))
+            qDebug() << "impossivel enviar nickname em uso";
+    }
 
 }
 
