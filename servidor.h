@@ -42,8 +42,6 @@ private:
     QString mensagem() const;
     void setMensagem(const QByteArray &msg);
 
-    QString encapsularMsg(const QString &qstrOrigem, const QString &qstrDestino = "", const QString &qstrMsg = "");
-
     Conexao *conexao() const;
     void setConexao(Conexao *conexao);
 
