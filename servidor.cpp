@@ -56,6 +56,7 @@ void Servidor::readyRead(const QByteArray &msg)
     if(destino().isEmpty()) //representa o nickname
     {
         validarNickname();
+        return;
     }
 
 }
