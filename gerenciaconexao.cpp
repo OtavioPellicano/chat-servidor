@@ -32,6 +32,8 @@ bool GerenciaConexao::addNickname(const QString &nick, Conexao *cliente)
 
 void GerenciaConexao::rmNickname(const QString &nickname)
 {
+    salvarLog(DESCONECTADO, nickname);
+    broadcast(DESCONECTADO, nickname);
     mMapNickConexao.erase(mMapNickConexao.find(nickname));
 }
 
