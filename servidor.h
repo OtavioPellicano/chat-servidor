@@ -45,7 +45,7 @@ private:
     Conexao *conexao() const;
     void setConexao(Conexao *conexao);
 
-    void validarNickname();
+//    void validarNickname();
     bool validarEstruturaMensagem(const QByteArray &msg);
 
 

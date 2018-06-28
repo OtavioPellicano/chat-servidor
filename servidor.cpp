@@ -55,7 +55,7 @@ void Servidor::readyRead(const QByteArray &msg)
 
     if(destino().isEmpty()) //representa o nickname
     {
-        validarNickname();
+        gerenConexao()->addNickname(origem(), conexao());
         return;
     }
 
@@ -142,24 +142,24 @@ void Servidor::setConexao(Conexao *conexao)
  * Caso exista, o cliente é desconectado
  * Caso não exista, o nickname é cadastrado
  */
-void Servidor::validarNickname()
-{
+//void Servidor::validarNickname()
+//{
 
-    if(gerenConexao()->addNickname(origem(), conexao()))
-    {
-        if(!conexao()->enviarMensagem(gerenConexao()->encapsularMsg(origem())))
-            qDebug() << "impossivel enviar mensagem!";
-    }
-    else
-    {
-        qDebug() << "nickname ja existe";
-        if(!conexao()->enviarMensagem(gerenConexao()->encapsularMsg("")))
-            qDebug() << "impossivel enviar mensagem!";
+//    if(gerenConexao()->addNickname(origem(), conexao()))
+//    {
+//        if(!conexao()->enviarMensagem(gerenConexao()->encapsularMsg(origem())))
+//            qDebug() << "impossivel enviar mensagem!";
+//    }
+//    else
+//    {
+//        qDebug() << "nickname ja existe";
+//        if(!conexao()->enviarMensagem(gerenConexao()->encapsularMsg("")))
+//            qDebug() << "impossivel enviar mensagem!";
 
-        delete conexao();
-    }
+//        delete conexao();
+//    }
 
-}
+//}
 /**
  * @brief Servidor::validarEstruturaMensagem
  * @param msg
