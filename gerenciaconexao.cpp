@@ -83,13 +83,32 @@ void GerenciaConexao::broadcast(const GerenciaConexao::enumStatus &status, const
     QStringList listaUsuarios;
     QString flagBroadcast;
 
+    //carregando lista de usuarios para envio. o ultimo conectado/desconectado sempre sera o ultimo
+    for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
+    {
+        if(itMap->first != usuario)
+            listaUsuarios << itMap->first;
+    }
+    listaUsuarios << usuario;
+    broadMsg = listaUsuarios.join(";");
+
+
     if(status == CONECTADO)
     {
         flagBroadcast = BROADCAST_CONECTADO;
+        for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
+        {
+            itMap->second->enviarMensagem(encapsularMsg(BROADCAST_KEY, flagBroadcast, broadMsg));
+        }
     }
     else if(status == DESCONECTADO)
     {
         flagBroadcast = BROADCAST_DESCONECTADO;
+        for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
+        {
+            if(itMap->first != usuario)
+                itMap->second->enviarMensagem(encapsularMsg(BROADCAST_KEY, flagBroadcast, broadMsg));
+        }
     }
     else
     {
@@ -97,14 +116,6 @@ void GerenciaConexao::broadcast(const GerenciaConexao::enumStatus &status, const
         return;
     }
 
-    //carregando lista de usuarios para envio
-    for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
-    {
-        listaUsuarios << itMap->first;
-    }
-    broadMsg = listaUsuarios.join(";");
-
-    mMapNickConexao[usuario]->enviarMensagem(encapsularMsg(BROADCAST_KEY, flagBroadcast, broadMsg));
 
 }
 
