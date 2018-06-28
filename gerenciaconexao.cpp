@@ -8,50 +8,104 @@ GerenciaConexao::GerenciaConexao()
 
 GerenciaConexao::~GerenciaConexao()
 {
-    mMapNickDescript.clear();
+    mMapNickConexao.clear();
 }
 
-bool GerenciaConexao::addNickname(const QString &nick, const qintptr &descript)
+
+bool GerenciaConexao::addNickname(const QString &nick, Conexao *cliente)
 {
-    if(mMapNickDescript.find(nick) != mMapNickDescript.end())
+    if(mMapNickConexao.find(nick) != mMapNickConexao.end())
         return false;
 
-    mMapNickDescript[nick] = descript;
-    salvarLog(CONECTADO, nickname(descript));
-    return true;
+    mMapNickConexao[nick] = cliente;
+    salvarLog(CONECTADO, nickname(cliente->descriptor()));
+    broadcast(CONECTADO, nickname(cliente->descriptor()));
 
+    return true;
 }
 
 void GerenciaConexao::rmNickname(const QString &nickname)
 {
-    mMapNickDescript.erase(mMapNickDescript.find(nickname));
+    mMapNickConexao.erase(mMapNickConexao.find(nickname));
 }
 
 void GerenciaConexao::rmNickname(const qintptr &descript)
 {
-    for(auto itMap = mMapNickDescript.begin(); itMap != mMapNickDescript.end(); ++itMap)
+    for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
     {
-        if(itMap->second == descript)
+        if(itMap->second->descriptor() == descript)
         {
             salvarLog(DESCONECTADO, nickname(descript));
-            mMapNickDescript.erase(itMap->first);
+            broadcast(DESCONECTADO, nickname(descript));
+            mMapNickConexao.erase(itMap->first);
             return;
         }
     }
-
 
 }
 
 QString GerenciaConexao::nickname(const qintptr &descript)
 {
-    for(auto itMap = mMapNickDescript.begin(); itMap != mMapNickDescript.end(); ++itMap)
+
+    for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
     {
-        if(itMap->second == descript)
+        if(itMap->second->descriptor() == descript)
         {
             return itMap->first;
         }
     }
     return QString("");
+}
+
+qintptr GerenciaConexao::descriptor(const QString &nick)
+{
+    return mMapNickConexao[nick]->descriptor();
+}
+
+QString GerenciaConexao::encapsularMsg(const QString &qstrOrigem, const QString &qstrDestino, const QString &qstrMsg)
+{
+    return QString("#%1#%2#:%3").arg(qstrOrigem).arg(qstrDestino).arg(qstrMsg);
+}
+
+/**
+ * @brief GerenciaConexao::broadcast
+ * @param status
+ * @param usuario
+ * envia um broadCast dos usuarios conectados
+ */
+void GerenciaConexao::broadcast(const GerenciaConexao::enumStatus &status, const QString &usuario)
+{
+    //Se tiver apenas um usuário, não há necessidade de broadcast
+    if(mMapNickConexao.size() == 1)
+        return;
+
+    QString broadMsg;
+    QStringList listaUsuarios;
+    QString flagBroadcast;
+
+    if(status == CONECTADO)
+    {
+        flagBroadcast = BROADCAST_CONECTADO;
+    }
+    else if(status == DESCONECTADO)
+    {
+        flagBroadcast = BROADCAST_DESCONECTADO;
+    }
+    else
+    {
+        qDebug() << "status invalido!";
+        return;
+    }
+
+    //carregando lista de usuarios para envio
+    for(auto itMap = mMapNickConexao.begin(); itMap != mMapNickConexao.end(); ++itMap)
+    {
+        listaUsuarios << itMap->first;
+    }
+    broadMsg = listaUsuarios.join(";");
+
+    mMapNickConexao[usuario]->enviarMensagem(encapsularMsg(BROADCAST_KEY, flagBroadcast, broadMsg));
+
 }
 
 /**
@@ -87,6 +141,7 @@ void GerenciaConexao::salvarLog(const enumStatus &status, const QString &qstrCli
     {
         arq << log.toStdString() << std::endl;
         arq.close();
+        qDebug() << "log salvo";
     }
     else
     {
@@ -103,6 +158,7 @@ void GerenciaConexao::setupDir()
     mDirLog.mkdir("log");
     mDirLog.cd("log");
 }
+
 
 void GerenciaConexao::setNomeArqOut(const QString &nomeArqOut)
 {

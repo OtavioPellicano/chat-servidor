@@ -8,22 +8,34 @@
 #include <QDir>
 #include <QDateTime>
 #include <QDebug>
+#include "conexao.h"
 
 
 using std::map;
 using std::ofstream;
+using std::pair;
+
 class GerenciaConexao
 {
+private:
+    enum enumStatus{CONECTADO, DESCONECTADO};
+
+
 public:
     GerenciaConexao();
     virtual ~GerenciaConexao();
 
-    bool addNickname(const QString &nick, const qintptr &descript);
+    bool addNickname(const QString &nick, Conexao *cliente);
     void rmNickname(const QString &nickname);
     void rmNickname(const qintptr &descript);
     QString nickname(const qintptr &descript);
+    qintptr descriptor(const QString &nick);
+    QString encapsularMsg(const QString &qstrOrigem, const QString &qstrDestino = "", const QString &qstrMsg = "");
+    void broadcast(const enumStatus &status, const QString &usuario);
+
 
 private:
+
 
     void setNomeArqOut(const QString &nomeArqOut);
 
@@ -31,7 +43,6 @@ private:
 
     QString nomeArqOut() const;
 
-    enum enumStatus{CONECTADO, DESCONECTADO};
 
     void salvarLog(const enumStatus &status, const QString &qstrCliente);
 
@@ -39,9 +50,16 @@ private:
 
 
 private:
-    map<QString, qintptr> mMapNickDescript;
     QDir mDirLog;
     QString mNomeArqOut;
+
+    map<QString, Conexao*> mMapNickConexao;
+
+    const QString BROADCAST_KEY = "$$$";
+    const QString BROADCAST_CONECTADO = "$c$";      //broadcast: #$$$$#$c$#:user1;user2;user3
+    const QString BROADCAST_DESCONECTADO = "$d$";   //broadcast: #$$$$#$d$#:user1;user2;user3
+
+    QTcpSocket *mSocket;
 
 };
 
