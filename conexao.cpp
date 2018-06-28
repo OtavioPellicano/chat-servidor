@@ -73,10 +73,16 @@ bool Conexao::enviarMensagem(const QString &msg)
 {
 
     QByteArray byteArrayTemp = msg.toLocal8Bit();
-    byteArrayTemp.append("\r\n");
+    byteArrayTemp.append("\r\n\r\n\r\n");           //para garantir o envio!
     socket()->write(byteArrayTemp);
     if(!socket()->waitForBytesWritten())
         return false;
+
+    qDebug() << descriptor() << ":enviado servidor:" << byteArrayTemp;
+
+    //add um consumidor de tempo para testa:
+    for(size_t i = 0; i < 50000; ++i){}
+
     return true;
 }
 
