@@ -1,14 +1,5 @@
 #ifndef SERVIDOR_H
 #define SERVIDOR_H
-/**
-  Formato da mensagem:
-  #origem#destino#:mensagem
-
-  Formato Nickname:
-  #origem##:
-
-
-**/
 
 #include <QTcpServer>
 #include <QDebug>
@@ -16,8 +7,6 @@
 #include <QStringBuilder>
 #include "conexao.h"
 #include "gerenciaconexao.h"
-
-using std::string;
 
 class Servidor : public QTcpServer
 {
@@ -33,24 +22,10 @@ private:
     GerenciaConexao *gerenConexao() const;
     void setGerenConexao(GerenciaConexao *gerenConexao);
 
-    QString origem() const;
-    void setOrigem(const QByteArray &msg);
-
-    QString destino() const;
-    void setDestino(const QByteArray &msg);
-
-    QString mensagem() const;
-    void setMensagem(const QByteArray &msg);
-
     Conexao *conexao() const;
     void setConexao(Conexao *conexao);
 
-//    void validarNickname();
-    bool validarEstruturaMensagem(const QByteArray &msg);
-
-
 protected:
-
     void incomingConnection(qintptr descript);
 
 signals:
@@ -65,9 +40,6 @@ private:
 
     GerenciaConexao *mGerenConexao;
 
-    QString mOrigem;
-    QString mDestino;
-    QString mMensagem;
 };
 
 #endif // SERVIDOR_H

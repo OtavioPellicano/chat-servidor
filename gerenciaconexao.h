@@ -17,6 +17,7 @@ using std::map;
 using std::ofstream;
 using std::ifstream;
 using std::endl;
+using std::string;
 
 class GerenciaConexao: public QObject
 {
@@ -39,18 +40,21 @@ public:
 
     void redirecionarMensagem(const QString &org, const QString &dst, const QString &msg);
 
+    QString origem() const;
+    void setOrigem(const QByteArray &msg);
+
+    QString destino() const;
+    void setDestino(const QByteArray &msg);
+
+    QString mensagem() const;
+    void setMensagem(const QByteArray &msg);
+
+    bool validarEstruturaMensagem(const QByteArray &msg);
+
+
 signals:
     void salvarLog(const QString &org, const QString &dst, const QString &msg);
 
-private:
-
-    void setNomeArqOut(const QString &nomeArqOut);
-
-    QDir dirLog() const;
-
-    QString nomeArqOut() const;
-
-    void setupDir();
 
 private:
     QDir mDirLog;
@@ -65,6 +69,10 @@ private:
     QTcpSocket *mSocket;
 
     Log *mLog;
+
+    QString mOrigem;
+    QString mDestino;
+    QString mMensagem;
 
 };
 
