@@ -25,7 +25,6 @@ void Servidor::startServidor()
 
 void Servidor::incomingConnection(qintptr descript)
 {
-    qDebug() << "incomingConnection";
     setConexao(new Conexao(descript, this));
     connect(conexao(), SIGNAL(destroyed(QObject*)), conexao(), SLOT(deleteLater()));
     connect(conexao(), SIGNAL(readyRead(QByteArray)), this, SLOT(readyRead(QByteArray)));
@@ -35,7 +34,6 @@ void Servidor::incomingConnection(qintptr descript)
 
 void Servidor::readyRead(const QByteArray &msg)
 {
-    qDebug() << msg;
 
     if(!gerenConexao()->validarEstruturaMensagem(msg))
     {
@@ -47,10 +45,6 @@ void Servidor::readyRead(const QByteArray &msg)
     gerenConexao()->setOrigem(msg);
     gerenConexao()->setDestino(msg);
     gerenConexao()->setMensagem(msg);
-
-    qDebug() << gerenConexao()->origem();
-    qDebug() << gerenConexao()->destino();
-    qDebug() << gerenConexao()->mensagem();
 
     if(gerenConexao()->destino().isEmpty()) //representa o nickname
     {
@@ -69,9 +63,7 @@ void Servidor::readyRead(const QByteArray &msg)
 
 void Servidor::disconnected(const qintptr &descrpt)
 {
-    qDebug() << "nickname removido";
     gerenConexao()->rmNickname(descrpt);
-
 }
 
 GerenciaConexao *Servidor::gerenConexao() const

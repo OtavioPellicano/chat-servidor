@@ -70,8 +70,6 @@ bool Conexao::enviarMensagem(const QString &msg)
     if(!socket()->waitForBytesWritten())
         return false;
 
-    qDebug() << descriptor() << ":enviado servidor:" << byteArrayTemp;
-
     socket()->flush();
     QTest::qSleep(50);  //Para garantir envio individual de mensagem
 
