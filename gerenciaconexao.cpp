@@ -1,9 +1,19 @@
 #include "gerenciaconexao.h"
 
-GerenciaConexao::GerenciaConexao()
+GerenciaConexao::GerenciaConexao(QObject *parent)
+    :QObject(parent)
 {
     setNomeArqOut("log");
     setupDir();
+
+    mLog = new Log();
+    mLog->setAutoDelete(true);
+
+    //Fazendo uma conexao em fila (especificao)
+    connect(this, SIGNAL(salvarLog(QString,QString,QString)), mLog, SLOT(salvarLog(QString,QString,QString)), Qt::QueuedConnection);
+
+    QThreadPool::globalInstance()->start(mLog);
+
 }
 
 GerenciaConexao::~GerenciaConexao()
@@ -21,10 +31,9 @@ bool GerenciaConexao::addNickname(const QString &nick, Conexao *cliente)
         return false;
     }
 
-
     mMapNickConexao[nick] = cliente;
     validarNickname(nick, cliente, true);
-    salvarLog(CONECTADO, nickname(cliente->descriptor()));
+    emit salvarLog(nickname(cliente->descriptor()), BROADCAST_CONECTADO, "");
     broadcast(CONECTADO, nickname(cliente->descriptor()));
 
     return true;
@@ -32,7 +41,8 @@ bool GerenciaConexao::addNickname(const QString &nick, Conexao *cliente)
 
 void GerenciaConexao::rmNickname(const QString &nickname)
 {
-    salvarLog(DESCONECTADO, nickname);
+    emit salvarLog(nickname, BROADCAST_DESCONECTADO, "");
+
     broadcast(DESCONECTADO, nickname);
     mMapNickConexao.erase(mMapNickConexao.find(nickname));
 }
@@ -43,7 +53,7 @@ void GerenciaConexao::rmNickname(const qintptr &descript)
     {
         if(itMap->second->descriptor() == descript)
         {
-            salvarLog(DESCONECTADO, nickname(descript));
+            emit salvarLog(nickname(descript), BROADCAST_DESCONECTADO, "");
             broadcast(DESCONECTADO, nickname(descript));
             mMapNickConexao.erase(itMap->first);
             return;
@@ -100,7 +110,6 @@ void GerenciaConexao::broadcast(const GerenciaConexao::enumStatus &status, const
     listaUsuarios << usuario;
     broadMsg = listaUsuarios.join(";");
 
-
     if(status == CONECTADO)
     {
         flagBroadcast = BROADCAST_CONECTADO;
@@ -147,68 +156,6 @@ void GerenciaConexao::redirecionarMensagem(const QString &org, const QString &ds
     mMapNickConexao[org]->enviarMensagem(encapsularMsg(org, dst, msg));
     mMapNickConexao[dst]->enviarMensagem(encapsularMsg(org, dst, msg));
 }
-
-/**
- * @brief GerenciaConexao::salvarLog
- * @param status
- * @return
- * Modelo de salvamento
- * yyyy-MM-dd HH:mm:ss -> cliente status
- */
-
-void GerenciaConexao::salvarLog(const enumStatus &status, const QString &qstrCliente)
-{
-    QString log = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-
-    log = log % ";" % qstrCliente;
-
-    if(status == CONECTADO)
-    {
-        log = log % ";conectado";
-    }
-    else if(status == DESCONECTADO)
-    {
-        log = log % ";desconectado";
-    }
-    else
-    {
-        qDebug() << "status invalido!";
-        return;
-    }
-
-
-    ifstream arqExist(dirLog().absoluteFilePath(nomeArqOut()).toStdString());
-    bool primeiraEscrita;
-    if(arqExist.is_open())
-    {
-        primeiraEscrita = false;
-        arqExist.close();
-    }
-    else
-    {
-        primeiraEscrita = true;
-    }
-
-
-    ofstream arq(dirLog().absoluteFilePath(nomeArqOut()).toStdString(), ofstream::app);
-    if(arq.is_open())
-    {
-        if(primeiraEscrita)
-            arq << "Data-hora;usuário;status" << endl;
-
-        arq << log.toStdString() << endl;
-        arq.close();
-        qDebug() << "log salvo";
-    }
-    else
-    {
-        qDebug() << "impossivel abrir arquivo de log:" << nomeArqOut();
-        return;
-    }
-
-
-}
-
 
 void GerenciaConexao::setupDir()
 {

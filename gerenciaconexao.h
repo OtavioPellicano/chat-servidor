@@ -8,7 +8,9 @@
 #include <QDir>
 #include <QDateTime>
 #include <QDebug>
+#include <QObject>
 #include "conexao.h"
+#include "log.h"
 
 
 using std::map;
@@ -16,13 +18,14 @@ using std::ofstream;
 using std::ifstream;
 using std::endl;
 
-class GerenciaConexao
+class GerenciaConexao: public QObject
 {
+    Q_OBJECT
 private:
     enum enumStatus{CONECTADO, DESCONECTADO};
 
 public:
-    GerenciaConexao();
+    explicit GerenciaConexao(QObject *parent = nullptr);
     virtual ~GerenciaConexao();
 
     bool addNickname(const QString &nick, Conexao *cliente);
@@ -36,9 +39,10 @@ public:
 
     void redirecionarMensagem(const QString &org, const QString &dst, const QString &msg);
 
+signals:
+    void salvarLog(const QString &org, const QString &dst, const QString &msg);
 
 private:
-
 
     void setNomeArqOut(const QString &nomeArqOut);
 
@@ -46,11 +50,7 @@ private:
 
     QString nomeArqOut() const;
 
-
-    void salvarLog(const enumStatus &status, const QString &qstrCliente);
-
     void setupDir();
-
 
 private:
     QDir mDirLog;
@@ -63,6 +63,8 @@ private:
     const QString BROADCAST_DESCONECTADO = "$d$";   //broadcast: #$$$$#$d$#:user1;user2;user3
 
     QTcpSocket *mSocket;
+
+    Log *mLog;
 
 };
 
