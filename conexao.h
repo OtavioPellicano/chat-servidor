@@ -5,7 +5,6 @@
 #include <QTcpSocket>
 #include <QThreadPool>
 #include <QDebug>
-#include "task.h"
 #include <map>
 
 class Conexao : public QObject
