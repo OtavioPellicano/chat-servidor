@@ -13,13 +13,13 @@
 
 using std::map;
 using std::ofstream;
-using std::pair;
+using std::ifstream;
+using std::endl;
 
 class GerenciaConexao
 {
 private:
     enum enumStatus{CONECTADO, DESCONECTADO};
-
 
 public:
     GerenciaConexao();

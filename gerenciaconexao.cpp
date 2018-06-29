@@ -160,15 +160,15 @@ void GerenciaConexao::salvarLog(const enumStatus &status, const QString &qstrCli
 {
     QString log = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
-    log = log % " -> " % qstrCliente;
+    log = log % ";" % qstrCliente;
 
     if(status == CONECTADO)
     {
-        log = log % " conectado";
+        log = log % ";conectado";
     }
     else if(status == DESCONECTADO)
     {
-        log = log % " desconectado";
+        log = log % ";desconectado";
     }
     else
     {
@@ -176,10 +176,27 @@ void GerenciaConexao::salvarLog(const enumStatus &status, const QString &qstrCli
         return;
     }
 
+
+    ifstream arqExist(dirLog().absoluteFilePath(nomeArqOut()).toStdString());
+    bool primeiraEscrita;
+    if(arqExist.is_open())
+    {
+        primeiraEscrita = false;
+        arqExist.close();
+    }
+    else
+    {
+        primeiraEscrita = true;
+    }
+
+
     ofstream arq(dirLog().absoluteFilePath(nomeArqOut()).toStdString(), ofstream::app);
     if(arq.is_open())
     {
-        arq << log.toStdString() << std::endl;
+        if(primeiraEscrita)
+            arq << "Data-hora;usuário;status" << endl;
+
+        arq << log.toStdString() << endl;
         arq.close();
         qDebug() << "log salvo";
     }
@@ -202,7 +219,7 @@ void GerenciaConexao::setupDir()
 
 void GerenciaConexao::setNomeArqOut(const QString &nomeArqOut)
 {
-    mNomeArqOut = nomeArqOut % "-" % QDate::currentDate().toString("yyyy-MM-dd") % ".txt";
+    mNomeArqOut = nomeArqOut % "-" % QDate::currentDate().toString("yyyy-MM-dd") % ".csv";
 }
 
 
