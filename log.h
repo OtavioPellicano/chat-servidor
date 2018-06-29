@@ -10,8 +10,6 @@
 #include <QDateTime>
 #include <QDebug>
 
-
-
 using std::ifstream;
 using std::ofstream;
 using std::endl;
@@ -46,7 +44,6 @@ private:
     QDir mDirLog;
     QString mNomeArqOut;
 
-//    const QString BROADCAST_KEY = "$$$";
     const QString BROADCAST_CONECTADO = "$c$";      //broadcast: #$$$$#$c$#:user1;user2;user3
     const QString BROADCAST_DESCONECTADO = "$d$";   //broadcast: #$$$$#$d$#:user1;user2;user3
 
