@@ -34,6 +34,8 @@ public:
     void broadcast(const enumStatus &status, const QString &usuario);
     void validarNickname(QString nick, Conexao *cliente, const bool &valido);
 
+    void redirecionarMensagem(const QString &org, const QString &dst, const QString &msg);
+
 
 private:
 

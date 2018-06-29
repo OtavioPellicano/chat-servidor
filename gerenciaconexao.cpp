@@ -142,6 +142,12 @@ void GerenciaConexao::validarNickname(QString nick,Conexao *cliente, const bool 
 
 }
 
+void GerenciaConexao::redirecionarMensagem(const QString &org, const QString &dst, const QString &msg)
+{
+    mMapNickConexao[org]->enviarMensagem(encapsularMsg(org, dst, msg));
+    mMapNickConexao[dst]->enviarMensagem(encapsularMsg(org, dst, msg));
+}
+
 /**
  * @brief GerenciaConexao::salvarLog
  * @param status

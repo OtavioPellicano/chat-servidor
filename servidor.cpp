@@ -59,6 +59,13 @@ void Servidor::readyRead(const QByteArray &msg)
         return;
     }
 
+    if(!origem().isEmpty() && !destino().isEmpty() && !mensagem().isEmpty())
+    {
+        //redirecionar a mensagem
+        gerenConexao()->redirecionarMensagem(origem(), destino(), mensagem());
+        return;
+    }
+
 }
 
 void Servidor::disconnected(const qintptr &descrpt)
