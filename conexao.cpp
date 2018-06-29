@@ -23,7 +23,6 @@ void Conexao::startConexao()
 
     socket()->setSocketDescriptor(descriptor());
 
-
     qDebug() << descriptor() << ": cliente conectado!";
 
 }
@@ -38,13 +37,6 @@ void Conexao::readyRead()
 {
 
     emit readyRead(socket()->readAll());
-
-    //Preciso criar uma task (QRunnable)
-//    Task *task = new Task();
-//    task->setAutoDelete(true);
-
-//    QThreadPool::globalInstance()->start(task);
-
 
 }
 
@@ -81,6 +73,7 @@ bool Conexao::enviarMensagem(const QString &msg)
     qDebug() << descriptor() << ":enviado servidor:" << byteArrayTemp;
 
     socket()->flush();
+    QTest::qSleep(50);  //Para garantir envio individual de mensagem
 
     return true;
 }

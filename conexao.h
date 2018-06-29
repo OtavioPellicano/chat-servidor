@@ -6,6 +6,7 @@
 #include <QThreadPool>
 #include <QDebug>
 #include <map>
+#include <QTest>
 
 class Conexao : public QObject
 {
@@ -25,8 +26,6 @@ private:
 
     QTcpSocket *socket() const;
     void setSocket(QTcpSocket *socket);
-
-
 
 signals:
     void readyRead(const QByteArray &msg);
