@@ -81,7 +81,7 @@ bool Conexao::enviarMensagem(const QString &msg)
     qDebug() << descriptor() << ":enviado servidor:" << byteArrayTemp;
 
     //add um consumidor de tempo para testa:
-    for(size_t i = 0; i < 50000; ++i){}
+    for(size_t i = 0; i < 500000; ++i){}
 
     return true;
 }
