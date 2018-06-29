@@ -19,11 +19,11 @@ SOURCES += \
         main.cpp \
     servidor.cpp \
     conexao.cpp \
-    task.cpp \
-    gerenciaconexao.cpp
+    gerenciaconexao.cpp \
+    log.cpp
 
 HEADERS += \
     servidor.h \
     conexao.h \
-    task.h \
-    gerenciaconexao.h
+    gerenciaconexao.h \
+    log.h
