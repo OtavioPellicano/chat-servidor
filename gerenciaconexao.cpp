@@ -134,7 +134,7 @@ void GerenciaConexao::broadcast(const GerenciaConexao::enumStatus &status, const
 
 }
 
-void GerenciaConexao::validarNickname(QString nick,Conexao *cliente, const bool &valido)
+void GerenciaConexao::validarNickname(const QString& nick,Conexao *cliente, const bool &valido)
 {
     if(valido)
     {
